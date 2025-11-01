@@ -1,3 +1,5 @@
+sources = python/nodoka tests
+
 default: help
 
 .PHONY: help
@@ -15,32 +17,72 @@ help:
 	done
 
 # Nodoka Project
-# pyo3, maturin, uv, ruff
 
-.PHONY: py-sync
-.SILENT: py-sync
-py-sync: # Install dependencies (python)
+.PHONY: sync
+.SILENT: sync
+sync: # Install package dependencies
 	uv sync --all-extras --all-packages --group dev
 
-.PHONY: py-lint
-.SILENT: py-lint
-py-lint: # Run the linter (python)
-	uv run ruff check src/nodoka tests examples
-	uv run ruff format --check src/nodoka tests examples
+.PHONY: build-dev  
+build-dev: # Build the development version of the package
+	@rm -f python/nodoka/*.so
+	uv run maturin develop --uv
 
-.PHONY: py-format
-.SILENT: py-format
-py-format: # Format the code (python)
-	uv run ruff check --fix
-	uv run ruff format
+.PHONY: build-prod  
+build-prod: # Build the production version of the package
+	@rm -f python/nodoka/*.so
+	uv run maturin develop --uv --release
 
-.PHONY: py-format-check
-.SILENT: py-format-check
-py-format-check: # Check code formatting (python)
-	uv run ruff format --check
+.PHONY: format
+.SILENT: format
+format: # Format the code python and rust
+	uv run ruff check --fix $(sources)
+	uv run ruff format $(sources)
+	cargo fmt
 
-.PHONY: py-check
-.SILENT: py-check
-py-check: py-format-check py-lint tests # Run all checks (python)
+.PHONY: lint-python
+.SILENT: lint-python
+lint-python: # Lint python source files
+	uv run ruff check $(sources)
+	uv run ruff format --check $(sources)
 
-# TODO: rust targets
+.PHONY: lint-rust
+.SILENT: lint-rust
+lint-rust: # Lint rust source files
+	cargo fmt --version
+	cargo fmt --all -- --check
+	cargo clippy --version
+	cargo clippy --tests -- -D warnings
+
+.PHONY: lint
+.SILENT: lint
+lint: lint-python lint-rust # Lint python and rust source files
+
+.PHONY: ty
+.SILENT: ty
+ty: # Perform type checks with ty
+	uv run ty check $(sources)
+
+# .PHONY: mypy
+# .SILENT: mypy
+# mypy: # Perform type checks with mypy
+# 	uv run mypy $(sources)
+
+.PHONY: tests
+.SILENT: tests
+tests: # Run all tests
+	uv run pytest
+
+# utils
+
+.PHONY: clean
+.SILENT: clean
+clean: # Clear local caches and build artifacts
+	rm -rf `find . -name __pycache__`
+	rm -f `find . -type f -name '*.py[co]' `
+	rm -f `find . -type f -name '*~' `
+	rm -f `find . -type f -name '.*~' `
+	rm -rf *.egg-info
+	rm -rf build
+	rm -rf perf.data*
+	rm -rf python/nodoka/*.so
