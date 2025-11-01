@@ -1,0 +1,17 @@
+[package]
+name = "nodoka"
+version = "0.0.1-alpha"
+license = "MIT"
+homepage = "https://github.com/staciax/nodoka"
+repository = "https://github.com/staciax/nodoka.git"
+readme = "README.md"
+edition = "2021"
+rust-version = "1.90"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "nodoka"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.27.1", features = ["extension-module"] }

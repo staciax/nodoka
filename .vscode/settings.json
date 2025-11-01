@@ -1,0 +1,58 @@
+{
+    // General
+    "files.exclude": {
+        // python
+        "**/__pycache__": true,
+        // "**/.ruff_cache": true,
+        // "**/.mypy_cache": true,
+        // "**/.pytest_cache": true,
+        "**/*.egg-info": true,
+        // "**/build": true,
+        // "**/dist": true,
+        // "**/.venv": true,
+        // "**/.zed": true,
+        // "**/.gitattributes": true,
+        "**/.coverage": true,
+
+        // rust
+        // "**/target/**": true,
+    },
+    "files.readonlyInclude": {
+        // python
+        "**/.venv/**": true,
+        "**/dist/**": true,
+        "**/build/**": true,
+        "**/uv.lock": true,
+        
+        // rust
+        "**/target/**": true,
+        "**/Cargo.lock": true
+    },
+
+    // Ruff
+    "ruff.configuration": "${workspaceFolder}/.vscode/ruff.toml",
+
+    // Editor
+    "python.analysis.completeFunctionParens": false,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+    },
+    "python.analysis.ignore": [
+        "*"
+    ], // Disable Pylance
+    // Mypy
+    // "mypy.enabled": true,
+    // "mypy.runUsingActiveInterpreter": true,
+    // "mypy.configFile": "./pyproject.toml",
+    // Pytest
+    // "python.testing.pytestArgs": [
+    //     "tests"
+    // ],
+    // "python.testing.unittestEnabled": false,
+    // "python.testing.pytestEnabled": true
+}
